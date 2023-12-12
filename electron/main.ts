@@ -40,6 +40,8 @@ function createWindow() {
 		// win.loadFile('dist/index.html')
 		win.loadFile(path.join(process.env.DIST, 'index.html'));
 	}
+
+	win.webContents.openDevTools();
 }
 
 // Quit when all windows are closed, except on macOS. There, it's common

@@ -1,49 +1,70 @@
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import BookmarkAddIcon from '@mui/icons-material/BookmarkAdd';
-import BookmarkRemoveIcon from '@mui/icons-material/BookmarkRemove';
-import BookmarksIcon from '@mui/icons-material/Bookmarks';
-import DoneIcon from '@mui/icons-material/Done';
-import {
-	Box,
-	Divider,
-	IconButton,
-	InputAdornment,
-	MenuItem,
-	MenuList,
-	Popover,
-	TextField,
-} from '@mui/material';
-import { useState } from 'react';
+import { Box } from '@mui/material';
+import { Tabs } from 'antd';
+import { useRef, useState } from 'react';
 import './App.css';
-
-const PageLayoutRoot = () => ({
-	display: 'flex',
-	flex: '1 1 auto',
-	maxWidth: '100%',
-	paddingTop: 10,
-});
+import { Tab } from './Tab';
 
 function App() {
-	const [anchorEl, setAnchorEl] = useState(null);
+	const initialItems = [
+		{
+			label: 'Tab 1',
+			children: (
+				<>
+					<Tab />
+				</>
+			),
+			key: '1',
+		},
+	];
 
-	const [url, setUrl] = useState('https://www.google.com');
+	const [activeKey, setActiveKey] = useState(initialItems[0].key);
+	const [items, setItems] = useState(initialItems);
+	const newTabIndex = useRef(0);
 
-	const [bookmarks, setBookmarks] = useState([]);
-
-	const open = Boolean(anchorEl);
-	const id = open ? 'simple-popover' : undefined;
-
-	const handleClick = (event) => {
-		setAnchorEl(event.currentTarget);
+	const onChange = (newActiveKey) => {
+		setActiveKey(newActiveKey);
 	};
 
-	const handleClose = () => {
-		setAnchorEl(null);
+	const add = () => {
+		const newActiveKey = `newTab${newTabIndex.current++}`;
+		const newPanes = [...items];
+		newPanes.push({
+			label: 'New Tab',
+			children: (
+				<>
+					<Tab />
+				</>
+			),
+			key: newActiveKey,
+		});
+		setItems(newPanes);
+		setActiveKey(newActiveKey);
 	};
-
-	const onChangeUrl = (e) => {
-		setUrl(e.target.value);
+	const remove = (targetKey) => {
+		let newActiveKey = activeKey;
+		let lastIndex = -1;
+		items.forEach((item, i) => {
+			if (item.key === targetKey) {
+				lastIndex = i - 1;
+			}
+		});
+		const newPanes = items.filter((item) => item.key !== targetKey);
+		if (newPanes.length && newActiveKey === targetKey) {
+			if (lastIndex >= 0) {
+				newActiveKey = newPanes[lastIndex].key;
+			} else {
+				newActiveKey = newPanes[0].key;
+			}
+		}
+		setItems(newPanes);
+		setActiveKey(newActiveKey);
+	};
+	const onEdit = (targetKey, action) => {
+		if (action === 'add') {
+			add();
+		} else {
+			remove(targetKey);
+		}
 	};
 
 	return (
@@ -59,76 +80,14 @@ function App() {
 					flexGrow: 1,
 				}}
 			>
-				<Box
-					sx={{
-						display: 'flex',
-						flexDirection: 'row',
-						justifyContent: 'space-between',
-					}}
-				>
-					<Box>
-						<IconButton>
-							<ArrowBackIcon />
-						</IconButton>
-						<IconButton>
-							<ArrowForwardIcon />
-						</IconButton>
-					</Box>
-					<Box>
-						<TextField
-							onChange={onChangeUrl}
-							value={url}
-							InputProps={{
-								endAdornment: (
-									<InputAdornment position="end">
-										<IconButton>
-											<DoneIcon />
-										</IconButton>
-									</InputAdornment>
-								),
-							}}
-						>
-							{url}
-						</TextField>
-					</Box>
-					<Box>
-						<IconButton>
-							<BookmarkAddIcon />
-						</IconButton>
-						<IconButton>
-							<BookmarkRemoveIcon />
-						</IconButton>
-						<IconButton
-							aria-describedby={id}
-							variant="contained"
-							onClick={handleClick}
-						>
-							<BookmarksIcon />
-						</IconButton>
-						<Popover
-							id={id}
-							open={open}
-							anchorEl={anchorEl}
-							onClose={handleClose}
-							anchorOrigin={{
-								vertical: 'bottom',
-								horizontal: 'left',
-							}}
-						>
-							<MenuList>
-								{bookmarks.map((bookmark, index) => (
-									<MenuItem key={index} value={bookmark.url}>
-										{bookmark.name + ' | ' + bookmark.url}
-									</MenuItem>
-								))}
-							</MenuList>
-						</Popover>
-					</Box>
-				</Box>
-				<Divider sx={{ mt: 3 }} />
-				<Box>
-					<webview id="webview" src={url}></webview>
-				</Box>
+				<Tabs
+					tabPosition={'left'}
+					type="editable-card"
+					onChange={onChange}
+					activeKey={activeKey}
+					onEdit={onEdit}
+					items={items}
+				/>
 			</Box>
 		</>
 	);
