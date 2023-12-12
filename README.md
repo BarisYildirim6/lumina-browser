@@ -1,6 +1,10 @@
 # lumina-browser
 
 # To run express server
-- npm run server
+```bash
+npm run server
+```
 # To run electron
-- npm run dev
+```bash
+npm run dev
+```
