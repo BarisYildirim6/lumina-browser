@@ -1,16 +1,24 @@
-import { Box } from '@mui/material';
+import { Box, IconButton } from '@mui/material';
 import { Tabs } from 'antd';
 import { useRef, useState } from 'react';
 import './App.css';
 import { Tab } from './Tab';
+import CloseIcon from '@mui/icons-material/Close';
 
 function App() {
+	const [tabName, setTabName] = useState("Google");
+
+	const handleTableName = (name) => {
+		console.log(name)
+		console.log(tabName)
+	}
+
 	const initialItems = [
 		{
-			label: 'Tab 1',
+			label: "google",
 			children: (
 				<>
-					<Tab />
+					<Tab handleTableName={handleTableName}/>
 				</>
 			),
 			key: '1',
@@ -21,6 +29,14 @@ function App() {
 	const [items, setItems] = useState(initialItems);
 	const newTabIndex = useRef(0);
 
+	if (items.length === 0) {
+		window.ipcRenderer.send('my-close-app')
+	}
+
+	const handleCloseApp = () => {
+		window.ipcRenderer.send('my-close-app')
+	}
+
 	const onChange = (newActiveKey) => {
 		setActiveKey(newActiveKey);
 	};
@@ -29,10 +45,10 @@ function App() {
 		const newActiveKey = `newTab${newTabIndex.current++}`;
 		const newPanes = [...items];
 		newPanes.push({
-			label: 'New Tab',
+			label: "google",
 			children: (
 				<>
-					<Tab />
+					<Tab handleTableName={handleTableName} />
 				</>
 			),
 			key: newActiveKey,
@@ -80,6 +96,19 @@ function App() {
 					flexGrow: 1,
 				}}
 			>
+				<Box sx={{
+					display: 'flex',
+					justifyContent: 'flex-end',
+				}}>
+					<IconButton 
+						sx={{
+							backgroundColor: "red"
+						}}
+						onClick={handleCloseApp}
+					>
+						<CloseIcon/>
+					</IconButton>
+				</Box>
 				<Tabs
 					tabPosition={'left'}
 					type="editable-card"

@@ -18,7 +18,7 @@ import {
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 
-export const Tab = () => {
+export const Tab = (props) => {
 	const myRef = useRef(null);
 
 	const [anchorElB, setAnchorElB] = useState(null);
@@ -123,7 +123,7 @@ export const Tab = () => {
 			.get('http://127.0.0.1:7000/getBookmarks')
 			.then((res) => {
 				if (res && res.data) {
-					console.log(res.data);
+					//console.log(res.data);
 					const arr = [];
 					for (let i = 0; i < res.data.length; i++) {
 						arr.push(res.data[i]);
@@ -182,7 +182,7 @@ export const Tab = () => {
 			.get('http://127.0.0.1:7000/getHistory')
 			.then((res) => {
 				if (res && res.data) {
-					console.log(res.data);
+					//console.log(res.data);
 					const arr = [];
 					for (let i = 0; i < res.data.length; i++) {
 						arr.push(res.data[i]);
@@ -224,6 +224,7 @@ export const Tab = () => {
 					display: 'flex',
 					flexDirection: 'row',
 					justifyContent: 'space-between',
+					paddingRight: 1
 				}}
 			>
 				<Box>
