@@ -78,7 +78,15 @@ export const Tab = (props) => {
 		let inputUrl = url;
 
 		if (!(inputUrl.startsWith('http://') || inputUrl.startsWith('https://'))) {
-			inputUrl = 'http://' + inputUrl;
+			let tempUrl : string = 'http://' + inputUrl;
+
+			if(isValidUrl(tempUrl)){
+				inputUrl = tempUrl;
+			}
+
+			else {
+				inputUrl = makeGoogleStatement(inputUrl)
+			}
 		}
 		setSrc(inputUrl);
 	};
@@ -89,7 +97,7 @@ export const Tab = (props) => {
 		if (!(inputUrl.startsWith('http://') || inputUrl.startsWith('https://'))) {
 			inputUrl = 'http://' + inputUrl;
 		}
-		setSrc(inputUrl);
+		setSrc(makeGoogleStatement(inputUrl));
 	};
 
 	useEffect(() => {
@@ -357,3 +365,24 @@ export const Tab = (props) => {
 		</>
 	);
 };
+
+function makeGoogleStatement(url: string){
+	if(isValidUrl(url)){
+		return url;
+	}
+	const searchString : string = encodeURIComponent(url)
+	
+	console.log(searchString)
+
+	return `https://www.google.com/search?q=${searchString}`
+}
+
+ function isValidUrl (urlString : string){
+	var urlPattern = new RegExp('^(https?:\\/\\/)?'+ // validate protocol
+  '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // validate domain name
+  '((\\d{1,3}\\.){3}\\d{1,3}))'+ // validate OR ip (v4) address
+  '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // validate port and path
+  '(\\?[;&a-z\\d%_.~+=-]*)?'+ // validate query string
+  '(\\#[-a-z\\d_]*)?$','i'); // validate fragment locator
+	return !!urlPattern.test(urlString);
+}
