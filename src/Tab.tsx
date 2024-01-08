@@ -1,3 +1,4 @@
+
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import BookmarkAddIcon from '@mui/icons-material/BookmarkAdd';
@@ -5,6 +6,7 @@ import BookmarkRemoveIcon from '@mui/icons-material/BookmarkRemove';
 import BookmarksIcon from '@mui/icons-material/Bookmarks';
 import HistoryIcon from '@mui/icons-material/History';
 import ReplayIcon from '@mui/icons-material/Replay';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import {
 	Box,
 	Divider,
@@ -12,11 +14,13 @@ import {
 	MenuItem,
 	MenuList,
 	Popover,
+	Select,
 	TextField,
 	Typography,
 } from '@mui/material';
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
+import DownloadPage from './pages/DownloadPage';
 
 export const Tab = (props) => {
 	const myRef = useRef(null);
@@ -305,6 +309,13 @@ export const Tab = (props) => {
 					>
 						{url}
 					</TextField>
+
+					<MenuList>
+
+						<MenuItem onClick={openDownload} value = {'Downloads'}> Downloads </MenuItem>
+				
+					</MenuList>
+
 				</Box>
 				<Box>
 					<IconButton onClick={addBookmark}>
@@ -362,6 +373,8 @@ export const Tab = (props) => {
 			<Box>
 				<webview ref={myRef} id="webview" src={src}></webview>
 			</Box>
+
+			<DownloadPage></DownloadPage>
 		</>
 	);
 };
@@ -385,4 +398,10 @@ function makeGoogleStatement(url: string){
   '(\\?[;&a-z\\d%_.~+=-]*)?'+ // validate query string
   '(\\#[-a-z\\d_]*)?$','i'); // validate fragment locator
 	return !!urlPattern.test(urlString);
+}
+
+function openDownload(){
+
+	window.ipcRenderer.send("open-download")
+
 }

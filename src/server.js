@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const port = 7000;
 const fs = require('fs');
+const path = require('path')
 
 var cors = require('cors');
 app.use(cors());
@@ -12,7 +13,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/getBookmarks', (req, res) => {
-	const data = JSON.parse(fs.readFileSync('./src/bookmarks.json', 'utf8'));
+	const data = JSON.parse(fs.readFileSync(path.join(__dirname, 'bookmarks.json'), 'utf8'));
 	let bookmarks = data;
 	//console.log(bookmarks);
 	res.send(bookmarks);
@@ -21,7 +22,7 @@ app.get('/getBookmarks', (req, res) => {
 app.post('/addBookmark', (req, res) => {
 	let url = req.body.url;
 	let name = getDomainName(url);
-	const data = JSON.parse(fs.readFileSync('./src/bookmarks.json', 'utf8'));
+	const data = JSON.parse(fs.readFileSync(path.join(__dirname, 'bookmarks.json'), 'utf8'));
 	if (!url) {
 		res.status(400).send({ msg: 'Missing URL!' });
 	} else if (data.filter((bookmark) => bookmark.url === url).length > 0) {
@@ -29,47 +30,47 @@ app.post('/addBookmark', (req, res) => {
 	} else {
 		//console.log(data);
 		data.push({ name: name, url: url });
-		fs.writeFileSync('./src/bookmarks.json', JSON.stringify(data), 'utf8');
+		fs.writeFileSync(path.join(__dirname, 'bookmarks.json'), JSON.stringify(data), 'utf8');
 		res.sendStatus(200);
 	}
 });
 
 app.post('/deleteBookmark', (req, res) => {
 	let url = req.body.url;
-	let data = JSON.parse(fs.readFileSync('./src/bookmarks.json', 'utf8'));
+	let data = JSON.parse(fs.readFileSync(path.join(__dirname, 'bookmarks.json'), 'utf8'));
 	if (!url) {
 		res.status(400).send({ msg: 'Missing URL!' });
 	} else if (data.filter((bookmark) => bookmark.url === url).length === 0) {
 		res.status(400).send({ msg: 'Bookmark does not exist!' });
 	} else {
 		data = data.filter((bookmark) => bookmark.url !== url);
-		fs.writeFileSync('./src/bookmarks.json', JSON.stringify(data), 'utf8');
+		fs.writeFileSync(path.join(__dirname, 'bookmarks.json'), JSON.stringify(data), 'utf8');
 		res.sendStatus(200);
 	}
 });
 
 app.get('/getHistory', (req, res) => {
-	const data = JSON.parse(fs.readFileSync('./src/history.json', 'utf8'));
+	const data = JSON.parse(fs.readFileSync(path.join(__dirname, 'history.json'), 'utf8'));
 	let history = data;
-	//console.log(history);
+	console.log(history);
 	res.send(history);
 });
 
 app.post('/addHistory', (req, res) => {
 	let url = req.body.url;
 	let name = getDomainName(url);
-	const data = JSON.parse(fs.readFileSync('./src/history.json', 'utf8'));
+	const data = JSON.parse(fs.readFileSync(path.join(__dirname, 'history.json'), 'utf8'));
 	//console.log(data);
 	data.push({ name: name, url: url });
-	fs.writeFileSync('./src/history.json', JSON.stringify(data), 'utf8');
+	fs.writeFileSync(path.join(__dirname, 'history.json'), JSON.stringify(data), 'utf8');
 	res.sendStatus(200);
 });
 
 app.post('/deleteHistory', (req, res) => {
 	let url = req.body.url;
-	let data = JSON.parse(fs.readFileSync('./src/history.json', 'utf8'));
+	let data = JSON.parse(fs.readFileSync(path.join(__dirname, 'history.json'), 'utf8'));
 	data = data.filter((bookmark) => bookmark.url !== url);
-	fs.writeFileSync('./src/history.json', JSON.stringify(data), 'utf8');
+	fs.writeFileSync(path.join(__dirname, 'history.json'), JSON.stringify(data), 'utf8');
 	res.sendStatus(200);
 });
 

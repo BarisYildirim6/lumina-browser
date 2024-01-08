@@ -23,12 +23,12 @@ const VITE_DEV_SERVER_URL = process.env['VITE_DEV_SERVER_URL'];
 function createWindow() {
 	win = new BrowserWindow({
 		icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
-		autoHideMenuBar: true,
+		autoHideMenuBar: false,
 		webPreferences: {
 			preload: path.join(__dirname, 'preload.js'),
 			webviewTag: true,
 		},
-		fullscreen: true
+		fullscreen: false
 	});
 
 	// Test active push message to Renderer-process.
@@ -63,6 +63,10 @@ ipcMain.on('my-close-app', () => {
 	}
 });
 
+ipcMain.on('open-download', () => {
+	createDownloadPage()
+})
+
 app.on('activate', () => {
 	// On OS X it's common to re-create a window in the app when the
 	// dock icon is clicked and there are no other windows open.
@@ -72,3 +76,20 @@ app.on('activate', () => {
 });
 
 app.whenReady().then(createWindow);
+
+
+function createDownloadPage(){
+	
+	let winDownload = new BrowserWindow({
+		
+	})
+
+	if (VITE_DEV_SERVER_URL) {
+
+		let url = VITE_DEV_SERVER_URL + "DownloadPage"
+
+		console.log(url)
+		winDownload.loadURL(url);
+	}
+
+}
