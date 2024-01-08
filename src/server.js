@@ -73,6 +73,90 @@ app.post('/deleteHistory', (req, res) => {
 	res.sendStatus(200);
 });
 
+app.post('/download', (req, res) => {
+
+	let fileName = req.body.fileName
+	let url = req.body.url
+	let location = req.body.location
+	let date = req.body.date
+
+	const filePath = path.join(__dirname, 'download.json')
+
+	let str = fs.readFileSync(filePath, 'utf8')
+	const downloads = JSON.parse(str)
+	downloads.push({
+		'fileName' : fileName,
+		'url' : url,
+		'location' : location,
+		'date' : date
+	})
+
+	
+	fs.writeFileSync(filePath, JSON.stringify(downloads), 'utf-8')
+
+	res.send(200)
+})
+
+app.get('/getDownloads', (req, res) => {
+	const filePath = path.join(__dirname, 'download.json')
+	let str = fs.readFileSync(filePath, 'utf8')
+	const downloads = JSON.parse(str)
+
+	console.log(downloads)
+
+	res.send(str, 200)
+})
+
+app.post('/deleteDownload', (req, res) => {
+
+	let fileName = req.body.fileName
+	let url = req.body.url
+	let location = req.body.location
+	let date = req.body.date
+
+	
+
+	const filePath = path.join(__dirname, 'download.json')
+	let str = fs.readFileSync(filePath, 'utf8')
+	let downloads = JSON.parse(str)
+
+	downloads = downloads.filter((download) => 
+
+		download.fileName !== fileName ||
+		download.url !== url ||
+		download.location !== location ||
+		download.date !== date
+
+	)
+
+	fs.writeFileSync(filePath, JSON.stringify(downloads), 'utf-8')
+
+	res.send(200)
+
+
+})
+
+app.post('/showInFolder', (req, res) => {
+
+	let path = req.body.location
+
+	openExplorer(path, err =>{
+
+		if(err){
+			console.log(err)
+		}
+
+		else{
+
+			console.log("File Explorer Opened")
+
+		}
+
+	})
+
+
+})
+
 app.listen(port, () => {
 	console.log(`Server is listening on port ${port}`);
 });
