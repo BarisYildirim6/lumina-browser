@@ -36,7 +36,7 @@ export const Tab = (props) => {
 	const idBookmark = openB ? 'simple-popover' : undefined;
 	const idHistory = openH ? 'simple-popover' : undefined;
 
-	const handleOpenBookmark = (event) => {
+	const handleOpenBookmark = (event : any) => {
 		setAnchorElB(event.currentTarget);
 	};
 
@@ -44,7 +44,7 @@ export const Tab = (props) => {
 		setAnchorElB(null);
 	};
 
-	const handleOpenHistory = (event) => {
+	const handleOpenHistory = (event : any) => {
 		setAnchorElH(event.currentTarget);
 	};
 
@@ -52,11 +52,11 @@ export const Tab = (props) => {
 		setAnchorElH(null);
 	};
 
-	const onChangeUrl = (event) => {
+	const onChangeUrl = (event : any) => {
 		setUrl(event.target.value);
 	};
 
-	const handleKeyDown = (event) => {
+	const handleKeyDown = (event : any) => {
 		if (event.key === 'Enter') {
 			handleUrl();
 		}
@@ -359,9 +359,10 @@ export const Tab = (props) => {
 				</Box>
 			</Box>
 			<Divider sx={{ mt: 3 }} />
-			<Box>
-				<webview ref={myRef} id="webview" src={src}></webview>
-			</Box>
+			
+				<Box>
+					<webview ref={myRef} id="webview" src={src}></webview>
+				</Box>			
 		</>
 	);
 };

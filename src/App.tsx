@@ -1,11 +1,14 @@
 import { Box, IconButton } from '@mui/material';
 import { Tabs } from 'antd';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './App.css';
 import { Tab } from './Tab';
 import CloseIcon from '@mui/icons-material/Close';
+import { LeftPanel } from './LeftPanel';
 
 function App() {
+
+
 	const [tabName, setTabName] = useState("Google");
 
 	const handleTableName = (name) => {
@@ -17,9 +20,9 @@ function App() {
 		{
 			label: "google",
 			children: (
-				<>
+				<div>
 					<Tab handleTableName={handleTableName}/>
-				</>
+				</div>
 			),
 			key: '1',
 		},
@@ -84,8 +87,8 @@ function App() {
 	};
 
 	return (
-		<>
-			<Box
+		<div>
+			<Box 
 				component="main"
 				sx={{
 					display: 'flex',
@@ -109,6 +112,8 @@ function App() {
 						<CloseIcon/>
 					</IconButton>
 				</Box>
+
+				{
 				<Tabs
 					tabPosition={'left'}
 					type="editable-card"
@@ -117,8 +122,10 @@ function App() {
 					onEdit={onEdit}
 					items={items}
 				/>
+				}
+				
 			</Box>
-		</>
+		</div>
 	);
 }
 
