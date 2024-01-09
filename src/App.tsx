@@ -7,6 +7,18 @@ import CloseIcon from '@mui/icons-material/Close';
 
 function App() {
 	const [tabName, setTabName] = useState("Google");
+	
+
+	function handleMouseEvent(e) {
+
+		if(e.ctrlKey){
+			if(e.deltaY < 0)
+				window.ipcRenderer.send('scrollEvent', {delta: 1})
+            else
+				window.ipcRenderer.send('scrollEvent', {delta: -1})
+		}
+		console.log(e)
+	}
 
 	const handleTableName = (name) => {
 		console.log(name)
@@ -84,7 +96,7 @@ function App() {
 	};
 
 	return (
-		<>
+		<div onWheel={(e) => handleMouseEvent(e)}>
 			<Box
 				component="main"
 				sx={{
@@ -118,7 +130,7 @@ function App() {
 					items={items}
 				/>
 			</Box>
-		</>
+		</div>
 	);
 }
 

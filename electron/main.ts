@@ -4,6 +4,8 @@ import { IpcMain } from 'electron';
 import axios from 'axios';
 
 
+
+
 // The built directory structure
 //
 // ├─┬─┬ dist
@@ -33,10 +35,13 @@ function createWindow() {
 		fullscreen: false
 	});
 
+	
 	// Test active push message to Renderer-process.
 	win.webContents.on('did-finish-load', () => {
 		win?.webContents.send('main-process-message', new Date().toLocaleString());
 	});
+
+	
 
 	win.webContents.session.on('will-download', (event, item, webContents) => {
 
@@ -95,6 +100,13 @@ ipcMain.on('my-close-app', () => {
 
 ipcMain.on('open-download', () => {
 	createDownloadPage()
+})
+
+ipcMain.on('scrollEvent', (event, args) => {
+	let x : number | undefined = win?.webContents.zoomLevel  
+	let delta = args.delta
+	x += delta
+	win?.webContents.setZoomLevel(x)
 })
 
 app.on('activate', () => {

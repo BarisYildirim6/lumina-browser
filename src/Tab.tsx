@@ -21,8 +21,23 @@ import {
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import DownloadPage from './pages/DownloadPage';
+import WebView from './WebView';
 
 export const Tab = (props) => {
+
+	useEffect(() => {
+
+		const elem = document.getElementById('w_div')
+		console.log(elem)
+
+		elem?.addEventListener('click', () => {
+			console.log("CLICKED FROM VIEW")
+		})
+
+
+	}, [])
+
+
 	const myRef = useRef(null);
 
 	const [anchorElB, setAnchorElB] = useState(null);
@@ -371,7 +386,7 @@ export const Tab = (props) => {
 			</Box>
 			<Divider sx={{ mt: 3 }} />
 			<Box>
-				<webview ref={myRef} id="webview" src={src}></webview>
+				<WebView myRef={myRef} src={src} ></WebView>
 			</Box>
 		</>
 	);
