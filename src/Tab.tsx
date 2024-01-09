@@ -373,8 +373,6 @@ export const Tab = (props) => {
 			<Box>
 				<webview ref={myRef} id="webview" src={src}></webview>
 			</Box>
-
-			<DownloadPage></DownloadPage>
 		</>
 	);
 };

@@ -1,6 +1,8 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, screen } from 'electron';
 import path from 'node:path';
 import { IpcMain } from 'electron';
+import axios from 'axios';
+
 
 // The built directory structure
 //
@@ -35,6 +37,34 @@ function createWindow() {
 	win.webContents.on('did-finish-load', () => {
 		win?.webContents.send('main-process-message', new Date().toLocaleString());
 	});
+
+	win.webContents.session.on('will-download', (event, item, webContents) => {
+
+		console.log("Save Path  ", item.getSavePath())
+		console.log("File Name  ", item.getFilename())
+		console.log("Something is downloaded yooooo")
+
+		item.once('done', (event, state) => {
+
+			if(state === 'completed'){
+				console.log(item.getSavePath())
+				console.log(item.getFilename())
+
+				let obj = {
+					fileName : item.getFilename(),
+					url : item.getURL(),
+					location : item.getSavePath(),
+					date : item.getLastModifiedTime()
+				}
+
+				axios.post("http://localhost:7000/download", obj)
+			}
+		})
+
+	})
+
+	
+
 
 	if (VITE_DEV_SERVER_URL) {
 		win.loadURL(VITE_DEV_SERVER_URL);
@@ -80,8 +110,12 @@ app.whenReady().then(createWindow);
 
 function createDownloadPage(){
 	
+	const {width , height } = screen.getPrimaryDisplay().workAreaSize
+
 	let winDownload = new BrowserWindow({
-		
+		width : width,
+		height : height,
+		fullscreen : true
 	})
 
 	if (VITE_DEV_SERVER_URL) {
