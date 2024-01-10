@@ -65,6 +65,8 @@ function getDomainName(url: string){
 	return !!urlPattern.test(urlString);
 }
 
+
+
 function openDownload(){
 
 	window.ipcRenderer.send("open-download")
@@ -343,6 +345,13 @@ function Tab(props) {
 	const idBookmark = openB ? 'simple-popover' : undefined;
 	const idHistory = openH ? 'simple-popover' : undefined;
 	const idSettings = openS ? 'simple-popover' : undefined;
+
+	function handleClick(){
+		setFinder(false)
+
+		window.ipcRenderer.send("closeText")
+		
+	}
 
 	const toggleFinder = (event) => {
 		if (event.ctrlKey && event.key === "f") {
@@ -737,7 +746,7 @@ function Tab(props) {
 			{finder && <Box sx={{display:"flex", justifyContent:"flex-end", alignItems: "center"}}>
 				<Typography>Find:</Typography>
 				<WordSearcher></WordSearcher>
-				<IconButton onClick={() => setFinder(false)}>
+				<IconButton onClick={() => handleClick()}>
 					<CloseIcon/>
 				</IconButton>
 			</Box>}			

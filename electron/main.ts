@@ -52,11 +52,13 @@ function createWindow() {
 				console.log(item.getSavePath())
 				console.log(item.getFilename())
 
+				const currentDate = new Date();
+
 				let obj = {
 					fileName : item.getFilename(),
 					url : item.getURL(),
 					location : item.getSavePath(),
-					date : item.getLastModifiedTime()
+					date : currentDate.getDate()
 				}
 
 				axios.post("http://localhost:7000/download", obj)
@@ -100,7 +102,10 @@ function createIncognitoWindow() {
 		console.log("File Name  ", item.getFilename())
 		console.log("Something is downloaded yooooo")
 
+		let date = new Date()
+
 		item.once('done', (event, state) => {
+
 
 			if(state === 'completed'){
 				console.log(item.getSavePath())
@@ -110,7 +115,7 @@ function createIncognitoWindow() {
 					fileName : item.getFilename(),
 					url : item.getURL(),
 					location : item.getSavePath(),
-					date : item.getLastModifiedTime()
+					date : date.getDate()
 				}
 
 				axios.post("http://localhost:7000/download", obj)
@@ -168,17 +173,25 @@ ipcMain.on('scrollEvent', (event, args) => {
 	win?.webContents.setZoomLevel(x)
 })
 
+win?.webContents.on('found-in-page', (event, result) => {
+	
+	if(result.finalUpdate){
+		win?.webContents.stopFindInPage('activateSelection')
+	}
+
+})
 
 ipcMain.on('search-text', (event, arg) => {
 
 	console.log(typeof arg)
-
 	if(arg && arg.length !== 0){
 		win?.webContents.findInPage(arg)
-		win?.webContents.send('focusText')
 	}
 })
 
+ipcMain.on('closeText', (event, arg) => {
+	win?.webContents.stopFindInPage('clearSelection')
+})
 
 
 app.on('activate', () => {
