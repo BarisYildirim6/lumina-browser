@@ -158,6 +158,20 @@ app.post('/showInFolder', (req, res) => {
 
 })
 
+app.get('/getSettings', (req, res) => {
+	const data = JSON.parse(fs.readFileSync(path.join(__dirname, 'settings.json'), 'utf8'));
+	let settings = data;
+	console.log(settings);
+	res.send(settings);
+});
+
+app.post('/applySettings', (req, res) => {
+	let setting = req.body;
+	console.log(setting);
+	fs.writeFileSync(path.join(__dirname, 'settings.json'), JSON.stringify(setting), 'utf8');
+	res.sendStatus(200);
+});
+
 app.listen(port, () => {
 	console.log(`Server is listening on port ${port}`);
 });

@@ -28,12 +28,11 @@ const VITE_DEV_SERVER_URL = process.env['VITE_DEV_SERVER_URL'];
 function createWindow() {
 	win = new BrowserWindow({
 		icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
-		autoHideMenuBar: false,
+		autoHideMenuBar: true,
 		webPreferences: {
 			preload: path.join(__dirname, 'preload.js'),
 			webviewTag: true,
 		},
-		fullscreen: false
 	});
 
 	
@@ -80,6 +79,59 @@ function createWindow() {
 	}
 
 
+	win.webContents.openDevTools();
+}
+
+function createIncognitoWindow() {
+	win = new BrowserWindow({
+		icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
+		autoHideMenuBar: true,
+		webPreferences: {
+			preload: path.join(__dirname, 'preload.js'),
+			webviewTag: true,
+		},
+	});
+
+	// Test active push message to Renderer-process.
+	win.webContents.on('did-finish-load', () => {
+		win?.webContents.send('main-process-message', new Date().toLocaleString());
+	});
+
+	win.webContents.session.on('will-download', (event, item, webContents) => {
+
+		console.log("Save Path  ", item.getSavePath())
+		console.log("File Name  ", item.getFilename())
+		console.log("Something is downloaded yooooo")
+
+		item.once('done', (event, state) => {
+
+			if(state === 'completed'){
+				console.log(item.getSavePath())
+				console.log(item.getFilename())
+
+				let obj = {
+					fileName : item.getFilename(),
+					url : item.getURL(),
+					location : item.getSavePath(),
+					date : item.getLastModifiedTime()
+				}
+
+				axios.post("http://localhost:7000/download", obj)
+			}
+		})
+
+	})
+
+	
+
+
+	if (VITE_DEV_SERVER_URL) {
+		win.loadURL(VITE_DEV_SERVER_URL + "Incognito");
+	} else {
+		// win.loadFile('dist/index.html')
+		win.loadFile(path.join(process.env.DIST, 'index.html'));
+	}
+
 	//win.webContents.openDevTools();
 }
 
@@ -99,6 +151,14 @@ ipcMain.on('my-close-app', () => {
 		win = null;
 	}
 });
+
+ipcMain.on('new-window', () => {
+	createWindow()
+})
+
+ipcMain.on('new-incognito-window', () => {
+	createIncognitoWindow()
+})
 
 ipcMain.on('open-download', () => {
 	createDownloadPage()
