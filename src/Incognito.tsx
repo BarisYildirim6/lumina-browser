@@ -32,8 +32,10 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import BookmarkAddIcon from '@mui/icons-material/BookmarkAdd';
 import BookmarkRemoveIcon from '@mui/icons-material/BookmarkRemove';
+import BookmarksIcon from '@mui/icons-material/Bookmarks';
 import HistoryIcon from '@mui/icons-material/History';
 import ReplayIcon from '@mui/icons-material/Replay';
+import CloseIcon from '@mui/icons-material/Close';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 function makeGoogleStatement(url: string){
@@ -176,76 +178,6 @@ function Settings() {
 	);
 }
 
-function History() {
-	const [history, setHistory] = useState([]);
-
-	const getHistory = async () => {
-		await axios
-			.get('http://127.0.0.1:7000/getHistory')
-			.then((res) => {
-				if (res && res.data) {
-					//console.log(res.data);
-					const arr = [];
-					for (let i = 0; i < res.data.length; i++) {
-						arr.push(res.data[i]);
-					}
-					setHistory(arr);
-				}
-			})
-			.catch((err) => {
-				if (err && err.response) {
-					console.log('Error:', err.response.data);
-				} else {
-					console.log('Connection error');
-				}
-			});
-	};
-
-    useEffect(() => {
-		getHistory();
-    }, []);
-
-
-    return (
-		<>
-			<Box
-				sx={{
-					width: "100%",
-					height: "100vh"
-				}}
-			>
-				<TableContainer component={Paper}>
-					<Table sx={{ minWidth: 650 }} aria-label="simple table">
-						<TableHead>
-						<TableRow>
-							<TableCell>ID</TableCell>
-							<TableCell align="right">Web Site</TableCell>
-							<TableCell align="right">URL</TableCell>
-							<TableCell align="right">Go to</TableCell>
-						</TableRow>
-						</TableHead>
-						<TableBody>
-							{history.map((items, index) => (
-								<TableRow
-								key={index}
-								sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-								>
-								<TableCell component="th" scope="row">
-									{index}
-								</TableCell>
-								<TableCell align="right">{items.name}</TableCell>
-								<TableCell align="right">{items.url}</TableCell>
-								<TableCell align="right">{items.url}</TableCell>
-								</TableRow>
-							))}
-						</TableBody>
-					</Table>
-   	 			</TableContainer>
-			</Box>
-		</>
-    );
-}
-
 function Downloads() {
 	const [downloadItems, setDowloadItems] = useState([]);
   
@@ -319,25 +251,21 @@ function Downloads() {
 }
 
 function Tab(props) {
-    const {handleTabName, handleCloseApp, openHistory, openDownloads, openSettings} = props
+    const {handleTabName, handleCloseApp, openDownloads, openSettings} = props
     const myRef = useRef(null);
 
 	const [anchorElB, setAnchorElB] = useState(null);
-	const [anchorElH, setAnchorElH] = useState(null);
 	const [anchorElS, setAnchorElS] = useState(null);
 
-	const [url, setUrl] = useState("https://www.google.com/");
-	const [src, setSrc] = useState("https://www.google.com/");
+	const [url, setUrl] = useState('https://www.google.com/');
+	const [src, setSrc] = useState('https://www.google.com/');
 
 	const [bookmarks, setBookmarks] = useState([]);
-	const [history, setHistory] = useState([]);
 
 	const openB = Boolean(anchorElB);
-	const openH = Boolean(anchorElH);
 	const openS = Boolean(anchorElS);
 
 	const idBookmark = openB ? 'simple-popover' : undefined;
-	const idHistory = openH ? 'simple-popover' : undefined;
 	const idSettings = openS ? 'simple-popover' : undefined;
 
 	const handleOpenBookmark = (event) => {
@@ -346,14 +274,6 @@ function Tab(props) {
 
 	const handleCloseBookmark = () => {
 		setAnchorElB(null);
-	};
-
-	const handleOpenHistory = (event) => {
-		setAnchorElH(event.currentTarget);
-	};
-
-	const handleCloseHistory = () => {
-		setAnchorElH(null);
 	};
 
 	const handleOpenSettings = (event) => {
@@ -416,15 +336,12 @@ function Tab(props) {
 	useEffect(() => {
 		getSettings()
 		getBookmarks();
-		getHistory();
 		if (myRef && myRef.current) {
 			myRef.current.addEventListener('did-navigate', (event) => {
 				setUrl(event.url);
-				addHistory(event.url);
 			});
 			myRef.current.addEventListener('did-navigate-in-page', (event) => {
 				setUrl(event.url);
-				addHistory(event.url);
 			});
 		}
 
@@ -432,11 +349,9 @@ function Tab(props) {
 			if (myRef && myRef.current) {
 				myRef.current.removeEventListener('did-navigate', (event) => {
 					setUrl(event.url);
-                    addHistory(event.url);
 				});
 				myRef.current.removeEventListener('did-navigate-in-page', (event) => {
 					setUrl(event.url);
-                    addHistory(event.url);
 				});
 			}
 		};
@@ -520,46 +435,6 @@ function Tab(props) {
 			});
 	};
 
-	const getHistory = async () => {
-		await axios
-			.get('http://127.0.0.1:7000/getHistory')
-			.then((res) => {
-				if (res && res.data) {
-					//console.log(res.data);
-					const arr = [];
-					for (let i = 0; i < res.data.length; i++) {
-						arr.push(res.data[i]);
-					}
-					setHistory(arr);
-				}
-			})
-			.catch((err) => {
-				if (err && err.response) {
-					console.log('Error:', err.response.data);
-				} else {
-					console.log('Connection error');
-				}
-			});
-	};
-
-	const addHistory = async (url) => {
-		const request = { url: url };
-		await axios
-			.post('http://127.0.0.1:7000/addHistory', request)
-			.then((res) => {
-				if (res && res.data) {
-					getHistory();
-				}
-			})
-			.catch((err) => {
-				if (err && err.response) {
-					console.log('Error: ' + err.response.data.msg);
-				} else {
-					console.log('Connection error');
-				}
-			});
-	};
-
 	return (
 		<>
 			<AppBar position='sticky' sx={{bgcolor: "white"}}>
@@ -581,49 +456,9 @@ function Tab(props) {
 					<IconButton onClick={handleReload}>
 						<ReplayIcon />
 					</IconButton>
-					<IconButton
-						aria-describedby={idHistory}
-						variant="contained"
-						onClick={handleOpenHistory}
-					>
-						<HistoryIcon />
-					</IconButton>
-					<Popover
-						id={idHistory}
-						open={openH}
-						anchorEl={anchorElH}
-						onClose={handleCloseHistory}
-						anchorOrigin={{
-							vertical: 'bottom',
-							horizontal: 'left',
-						}}
-					>
-						<Box
-							sx={{
-								display: 'flex',
-								justifyContent: 'center',
-								paddingTop: 1,
-							}}
-						>
-							<Typography>History</Typography>
-						</Box>
-						<Divider sx={{ mt: 1 }} />
-						<MenuList>
-							{history &&
-								history.map((historyTab, index) => (
-									<MenuItem
-										key={index}
-										value={historyTab.url}
-										onClick={() => {
-											handleUrlInstant(historyTab.url);
-											handleCloseHistory();
-										}}
-									>
-										{historyTab.name + ' | ' + historyTab.url}
-									</MenuItem>
-								))}
-						</MenuList>
-					</Popover>
+				</Box>
+				<Box sx={{display:"flex", alignItems:"center"}}>
+					<Typography color="black">Incognito</Typography>
 				</Box>
 				<Box
 					sx={{
@@ -671,7 +506,6 @@ function Tab(props) {
 							<MenuItem onClick={() => {openNewIncognitoWindow(); handleCloseSettings();}}>New Incognito Window</MenuItem>
 							<Divider sx={{ mt: 1 }} />
 							<MenuItem onClick={() => {openSettings(); handleCloseSettings();}}>Settings</MenuItem>
-							<MenuItem onClick={() => {openHistory(); handleCloseSettings();}}>History</MenuItem>
 							<MenuItem onClick={() => {openDownloads(); handleCloseSettings();}}>Downloads</MenuItem>
 							<MenuItem
 								aria-describedby={idBookmark}
@@ -729,7 +563,7 @@ function Tab(props) {
 	);
 }
 
-function App() {
+function Incognito() {
 	const [tabName, setTabName] = useState("Google");
 
 	const getSettings = async () => {
@@ -755,7 +589,7 @@ function App() {
     useEffect(() => {
 		getSettings();
     }, []);
-
+	
 	const handleCloseApp = () => {
 		window.ipcRenderer.send('my-close-app')
 	}
@@ -767,21 +601,6 @@ function App() {
 			children: (
 				<>
 					<Settings/>
-				</>
-			),
-			key: newActiveKey,
-		});
-		setItems(newPanes);
-		setActiveKey(newActiveKey);
-	};
-	const openHistory = () => {
-		const newActiveKey = `newTab${newTabIndex.current++}`;
-		const newPanes = [...items];
-		newPanes.push({
-			label: "History",
-			children: (
-				<>
-					<History/>
 				</>
 			),
 			key: newActiveKey,
@@ -810,7 +629,7 @@ function App() {
 			label: tabName,
 			children: (
 				<>
-					<Tab handleCloseApp={handleCloseApp} openDownloads={openDownloads} openHistory={openHistory} openSettings={openSettings}/>
+					<Tab handleCloseApp={handleCloseApp} openDownloads={openDownloads} openSettings={openSettings}/>
 				</>
 			),
 			key: '1',
@@ -836,7 +655,7 @@ function App() {
 			label: tabName,
 			children: (
 				<>
-					<Tab handleCloseApp={handleCloseApp} openDownloads={openDownloads} openHistory={openHistory} openSettings={openSettings}/>
+					<Tab handleCloseApp={handleCloseApp} openDownloads={openDownloads} openSettings={openSettings}/>
 				</>
 			),
 			key: newActiveKey,
@@ -897,4 +716,4 @@ function App() {
 	);
 }
 
-export default App;
+export default Incognito;
