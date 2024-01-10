@@ -22,6 +22,7 @@ import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import DownloadPage from './pages/DownloadPage';
 import WebView from './WebView';
+import WordSearcher from './pages/WordSearcher';
 
 export const Tab = (props) => {
 
@@ -388,6 +389,8 @@ export const Tab = (props) => {
 			<Box>
 				<WebView myRef={myRef} src={src} ></WebView>
 			</Box>
+
+			<WordSearcher></WordSearcher>
 		</>
 	);
 };

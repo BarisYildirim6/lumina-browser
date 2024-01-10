@@ -6,6 +6,7 @@ import axios from 'axios';
 
 
 
+
 // The built directory structure
 //
 // ├─┬─┬ dist
@@ -78,6 +79,7 @@ function createWindow() {
 		win.loadFile(path.join(process.env.DIST, 'index.html'));
 	}
 
+
 	//win.webContents.openDevTools();
 }
 
@@ -108,6 +110,19 @@ ipcMain.on('scrollEvent', (event, args) => {
 	x += delta
 	win?.webContents.setZoomLevel(x)
 })
+
+
+ipcMain.on('search-text', (event, arg) => {
+
+	console.log(typeof arg)
+
+	if(arg && arg.length !== 0){
+		win?.webContents.findInPage(arg)
+		win?.webContents.send('focusText')
+	}
+})
+
+
 
 app.on('activate', () => {
 	// On OS X it's common to re-create a window in the app when the
