@@ -6,9 +6,6 @@ import { useState } from "react";
 export default function WordSearcher(){
     
     const [searchValue, setSearchValue] = useState("")
-    const [spanName, setSpanName] = useState()
-
-
 
     window.ipcRenderer.on("focusText", () => {
         console.log("Focus Text Works")
@@ -31,17 +28,7 @@ export default function WordSearcher(){
 
     }
 
-    function removeSpans(){
-        
-    }
-
-    function addSpans(){
-
-        
-    }
-
-    
-
+   
 
     return (
         <TextField onKeyDown={handleKeyboard} id="wordSearcher" onChange={handleChange}> </TextField>

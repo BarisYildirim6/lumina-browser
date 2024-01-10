@@ -3,10 +3,6 @@ import path from 'node:path';
 import { IpcMain } from 'electron';
 import axios from 'axios';
 
-
-
-
-
 // The built directory structure
 //
 // ├─┬─┬ dist
@@ -16,6 +12,7 @@ import axios from 'axios';
 // │ │ ├── main.js
 // │ │ └── preload.js
 // │
+
 process.env.DIST = path.join(__dirname, '../dist');
 process.env.VITE_PUBLIC = app.isPackaged
 	? process.env.DIST

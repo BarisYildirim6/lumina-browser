@@ -35,6 +35,7 @@ import BookmarkRemoveIcon from '@mui/icons-material/BookmarkRemove';
 import HistoryIcon from '@mui/icons-material/History';
 import ReplayIcon from '@mui/icons-material/Replay';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import WordSearcher from './pages/WordSearcher';
 
 function makeGoogleStatement(url: string){
 	if(isValidUrl(url)){
@@ -725,6 +726,8 @@ function Tab(props) {
 			<Box>
 				<webview ref={myRef} id="webview" src={src}></webview>
 			</Box>
+
+			<WordSearcher></WordSearcher>
 		</>
 	);
 }
