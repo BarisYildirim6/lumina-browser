@@ -36,6 +36,7 @@ import HistoryIcon from '@mui/icons-material/History';
 import ReplayIcon from '@mui/icons-material/Replay';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import WordSearcher from './pages/WordSearcher';
+import CloseIcon from '@mui/icons-material/Close';
 
 function makeGoogleStatement(url: string){
 	if(isValidUrl(url)){
@@ -327,6 +328,8 @@ function Tab(props) {
 	const [anchorElH, setAnchorElH] = useState(null);
 	const [anchorElS, setAnchorElS] = useState(null);
 
+	const [finder, setFinder] = useState(false)
+
 	const [url, setUrl] = useState("https://www.google.com/");
 	const [src, setSrc] = useState("https://www.google.com/");
 
@@ -340,6 +343,13 @@ function Tab(props) {
 	const idBookmark = openB ? 'simple-popover' : undefined;
 	const idHistory = openH ? 'simple-popover' : undefined;
 	const idSettings = openS ? 'simple-popover' : undefined;
+
+	const toggleFinder = (event) => {
+		if (event.ctrlKey && event.key === "f") {
+			console.log(finder)
+			setFinder(true)
+		}
+	}
 
 	const handleOpenBookmark = (event) => {
 		setAnchorElB(event.currentTarget);
@@ -428,7 +438,7 @@ function Tab(props) {
 				addHistory(event.url);
 			});
 		}
-
+		document.addEventListener("keydown", toggleFinder)
 		return () => {
 			if (myRef && myRef.current) {
 				myRef.current.removeEventListener('did-navigate', (event) => {
@@ -440,6 +450,7 @@ function Tab(props) {
                     addHistory(event.url);
 				});
 			}
+			document.removeEventListener("keydown", toggleFinder)
 		};
 	}, []);
 
@@ -723,11 +734,16 @@ function Tab(props) {
 				</Box>
 			</Box>
 			</AppBar>
+			{finder && <Box sx={{display:"flex", justifyContent:"flex-end", alignItems: "center"}}>
+				<Typography>Find:</Typography>
+				<WordSearcher></WordSearcher>
+				<IconButton onClick={() => setFinder(false)}>
+					<CloseIcon/>
+				</IconButton>
+			</Box>}			
 			<Box>
 				<webview ref={myRef} id="webview" src={src}></webview>
 			</Box>
-
-			<WordSearcher></WordSearcher>
 		</>
 	);
 }
